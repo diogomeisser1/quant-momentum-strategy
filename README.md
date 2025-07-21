@@ -1,101 +1,57 @@
-# 📈 Moving Average Crossover Strategy — Walk-Forward Optimized Backtest
+# 📈 Momentum Strategy Backtesting
 
-This repository contains a complete end-to-end pipeline for developing, optimizing, and analyzing a **momentum-based moving average crossover trading strategy**. The project is implemented in Python using `pandas`, `NumPy`, and `yfinance`, and targets three major U.S. equity ETFs: **SPY**, **QQQ**, and **DIA**.
-
-## 🧠 Objective
-
-To test whether a moving average crossover strategy — dynamically optimized using Sharpe ratio in a walk-forward manner — can outperform a passive buy-and-hold approach, while maintaining reasonable trade frequency and risk-adjusted returns.
+This project explores and evaluates a momentum-based trading strategy using **moving average (MA) crossovers** across major ETFs: **SPY**, **QQQ**, and **DIA**. We experiment with different configurations and backtesting methods to demonstrate how strategy evaluation can evolve from basic testing to robust walk-forward validation.
 
 ---
 
-## 📂 Repository Structure
+## 🔍 Project Objectives
 
-```text
-.
-├── 01_Data_Collection.ipynb         # Downloads price data and computes log returns
-├── 02_Data_Exploration.ipynb        # Preliminary analysis and visualization of ETF behavior
-├── 03_MA_Strategy_Baseline.ipynb    # Simple MA crossover strategy visualization (static parameters)
-├── 04_Backtest_Optimization.ipynb   # Walk-forward strategy with parameter tuning via Sharpe ratio
-├── 05_Results.ipynb                 # Compiles and interprets final strategy performance
-├── data/                            # (Optional) Folder to store CSVs of downloaded/processed data
-├── strategy_results_sharpe_based_final.csv  # Final test results for each ETF per walk-forward period
-└── README.md
-```
+- Implement a momentum strategy using short/long moving average crossovers
+- Avoid overfitting by incorporating realistic constraints (buffer period, walk-forward validation)
+- Compare performance using return, Sharpe ratio, and trade count metrics
 
 ---
 
-## 📊 Strategy Summary
+## 📁 Project Structure
 
-The strategy buys when the short-term moving average crosses **above** the long-term moving average (plus a threshold), and sells when it crosses **below** (minus the threshold). Optimization is based on **out-of-sample Sharpe ratio**, not return, to prioritize consistency and risk-adjusted performance.
-
-Key Features:
-- ✅ Walk-forward training/testing splits (3-year train, 2-year test)
-- ✅ Buffer period to avoid lookahead bias in MA computation
-- ✅ Sharpe ratio optimization across:
-  - Short MA window: 10–100
-  - Long MA window: Short+10 to 255
-  - Threshold: 0.00000 to 0.00475 (in 0.00025 steps)
-- ✅ Minimum trade filter to avoid overfitting
-
----
-
-## 📌 Results Snapshot
-
-Each row in the final CSV includes:
-- ETF (SPY, QQQ, DIA)
-- Train/Test period range
-- Optimized short/long MA + threshold
-- Out-of-sample strategy return
-- Trade count
-- Sharpe ratio
-
-> 📝 **Note:** Strategy returns and Sharpe ratios are modest, as expected for a conservative moving average system, but show consistent outperformance for DIA in particular.
+| Notebook | Description |
+|----------|-------------|
+| `01_Data_Collection.ipynb` | Pulls ETF data using `yfinance` and saves it to CSV |
+| `02_Data_Exploration.ipynb` | Explores return behavior and trends of SPY, QQQ, and DIA |
+| `03_MA_Strategy_Baseline.ipynb` | Implements the simplest MA crossover without threshold or buffer |
+| `04_Backtest_80-20Split.ipynb` | Demonstrates overfitting by optimizing on the test set |
+| `05_Backtest_WalkForward_Return.ipynb` | Walk-forward backtest optimizing MA pairs by **raw return** |
+| `06_Backtest_WalkForward_Sharpe.ipynb` | ✅ **Final model**: walk-forward with buffer, trade count filter, and **Sharpe ratio optimization** |
+| `07_Results.ipynb` *(optional)* | For visualizing cumulative returns, Sharpe trends, etc. (to be filled) |
 
 ---
 
-## 📘 How to Run Locally
+## ✅ Final Model
 
-1. Clone the repo:
+The most robust version of the strategy is in:
+
+> 📌 `06_Backtest_WalkForward_Sharpe.ipynb`
+
+It features:
+- **Walk-forward backtesting** with training and testing windows
+- **Buffer period** to avoid lookahead bias
+- **Trade count minimum** to filter out unreliable strategies
+- Optimization based on **Sharpe ratio**, not just return
+
+---
+
+## 📊 Metrics Tracked
+
+- Cumulative Return
+- Sharpe Ratio
+- Trade Count
+- Buy & Hold Benchmark Comparison
+
+---
+
+## 📦 Requirements
+
+Install dependencies using pip:
+
 ```bash
-git clone https://github.com/yourusername/moving-average-strategy.git
-cd moving-average-strategy
-```
-
-2. (Optional) Create virtual environment and install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-3. Run notebooks in order:
-   - `01_Data_Collection.ipynb`
-   - `02_Data_Exploration.ipynb`
-   - `03_MA_Strategy_Baseline.ipynb`
-   - `04_Backtest_Optimization.ipynb`
-   - `05_Results.ipynb`
-
----
-
-## 🚧 Known Limitations
-
-- No transaction cost or slippage modeled (future enhancement)
-- Fixed trade sizing (equal weight); no volatility scaling or dynamic position sizing
-- Results use log returns; drawdown metrics and rolling Sharpe coming soon
-
----
-
-## 📈 Future Plans
-
-- Add slippage/fee sensitivity testing
-- Compare against RSI and Bollinger Band strategies
-- Incorporate rolling Sharpe and drawdown visualizations
-- Package strategy into a reusable Python module
-- Explore live paper trading via Alpaca or IBKR
-
----
-
-## 👨‍💻 Author
-
-**Diogo Meisser**  
-Master's in Economics, Texas A&M University  
-📧 diogomeisser@gmail.com  
-🔗 [LinkedIn](https://www.linkedin.com/in/diogom2)
+pip install pandas numpy matplotlib yfinance
